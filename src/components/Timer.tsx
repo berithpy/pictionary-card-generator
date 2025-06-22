@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import EmptyCard from './EmptyCard';
 
+const baseUrl = import.meta.env.BASE_URL;
+
 interface TimerProps {
     initialSeconds: number;
     onExpire?: () => void;
@@ -13,12 +15,12 @@ const Timer = ({ initialSeconds, onExpire }: TimerProps) => {
 
     // Play the timesup.wav sound from public when timer ends
     const playChime = () => {
-        const audio = new Audio('/timesup.wav');
+        const audio = new Audio(`${baseUrl}timesup.wav`);
         audio.play().catch(error => console.error('Failed to play sound:', error));
     };
 
     const playBlip = () => {
-        const audio = new Audio('/blip.wav');
+        const audio = new Audio(`${baseUrl}blip.wav`);
         audio.play().catch(error => console.error('Failed to play sound:', error));
     }
 
@@ -69,6 +71,16 @@ const Timer = ({ initialSeconds, onExpire }: TimerProps) => {
                     </button>)}
                     {isStarted && (<button
                         onClick={() => {
+                            setIsRunning(!isRunning);
+                            playBlip();
+                        }}
+                        disabled={!isRunning && !isStarted}
+                        className="w-1/3 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                        {isRunning ? 'Pause' : 'Play'}
+                    </button>)}
+                    <button
+                        onClick={() => {
                             setSeconds(initialSeconds);
                             setIsRunning(false);
                             setIsStarted(false);
@@ -77,16 +89,6 @@ const Timer = ({ initialSeconds, onExpire }: TimerProps) => {
                         className="w-1/3 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-200"
                     >
                         Reset
-                    </button>)}
-                    <button
-                        onClick={() => {
-                            setIsRunning(!isRunning);
-                            playBlip();
-                        }}
-                        disabled={!isRunning && !isStarted}
-                        className="w-1/3 px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    >
-                        Pause
                     </button>
 
                 </div>
